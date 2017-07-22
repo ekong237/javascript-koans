@@ -30,15 +30,25 @@ describe("About Applying What We Have Learnt", function() {
         }
     }
 
-    expect(productsICanEat.length).toBe(FILL_ME_IN);
+    expect(productsICanEat.length).toBe(1);
   });
 
   it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (functional)", function () {
       var productsICanEat = [];
 
+      var hasNoMushrooms = function(ingredient){
+        return ingredient !== 'mushrooms'; 
+      }
+
+      var canEat = products.filter(function(pizza,i){ 
+        return (pizza.ingredients.every(hasNoMushrooms) && (pizza.containsNuts === false)); 
+                                                      
+      });
+
+      productsICanEat=canEat;
       /* solve using filter() & all() / any() */
 
-      expect(productsICanEat.length).toBe(FILL_ME_IN);
+      expect(productsICanEat.length).toBe(1);
   });
 
   /*********************************************************************************/
@@ -52,13 +62,18 @@ describe("About Applying What We Have Learnt", function() {
       }
     }
     
-    expect(sum).toBe(FILL_ME_IN);
+    expect(sum).toBe(233168);
   });
 
   it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (functional)", function () {
-    var sum = FILL_ME_IN;    /* try chaining range() and reduce() */
+        /* try chaining range() and reduce() */
 
-    expect(233168).toBe(FILL_ME_IN);
+    var sum =_.range(1,1000).reduce(function(add, el){
+      return (el % 3 === 0 || el % 5 === 0) ? add+el : add;         
+    },0)
+
+
+    expect(233168).toBe(sum);
   });
 
   /*********************************************************************************/
@@ -71,28 +86,81 @@ describe("About Applying What We Have Learnt", function() {
         }
     }
 
-    expect(ingredientCount['mushrooms']).toBe(FILL_ME_IN);
+    expect(ingredientCount['mushrooms']).toBe(2);
   });
 
   it("should count the ingredient occurrence (functional)", function () {
-    var ingredientCount = { "{ingredient name}": 0 };
+    
+    //var ingredientCount = { "{ingredient name}": 0 };
+
+    //for each pizza get ingredients arr
+    //flatten array of array of ingredients
+    //reduce to sum of ingredient
+    var getIngredients = function(pizza){
+      return pizza.ingredients;
+    };
+    var countIngredients = function(count, ingredient){
+      return (ingredient === ingredientName) ? ++count : count;
+    }
+
+    var ingredientName = 'mushrooms';
+    var ingredientCount[ingredientName] = _products.chain()
+                                              .map(getIngredients)
+                                              .flatten()
+                                              .reduce(countIngredients,0);
 
     /* chain() together map(), flatten() and reduce() */
 
-    expect(ingredientCount['mushrooms']).toBe(FILL_ME_IN);
+    expect(ingredientCount['mushrooms']).toBe(2);
   });
 
-  /*********************************************************************************/
-  /* UNCOMMENT FOR EXTRA CREDIT */
-  /*
+
   it("should find the largest prime factor of a composite number", function () {
-  
+    //divide by smallest prime number, push prime in array, keep dividing until number isn't even, then increase divisor
+    //456/2 = 228/2 = 114/2 = 57 (increase)/3 = 19 (increase) /19 = 1 [2,2,2,3,19]
+
+    function largestPrimeFactor(n){
+      var factors = [];
+      var divisor = 2;
+      while (n>2){
+        if (n % divisor === 0){
+          factors.push(divisor);
+          n = n/divisor;
+        } else {
+          divisor++;
+        }
+      }
+      return factors[factors.length-1];
+    }
+
+    expect(largestPrimeFactor(456)).toBe(19);
+    expect(largestPrimeFactor(77)).toBe(11);
+    expect(largestPrimeFactor(189)).toBe(7);
+
   });
+
 
   it("should find the largest palindrome made from the product of two 3 digit numbers", function () {
-    
+    function largestPalin(num1,num2){
+      var productSplit = (num1*num2).toString().split('');
+      for(var i = productSplit.length; i > 1 ; i--){
+        var part = productSplit.slice(0,i);
+        var rev = productSplit.slice(0,i).reverse();
+        console.log(part, rev);
+        
+        if (part.join('') === rev.join('')){
+          return Number(part.join(''));
+        
+        }
+      }
+    }
+    expect(largestPalin()).toBe(906609);
+
   });
 
+});
+
+/*
   it("should find the smallest number divisible by each of the numbers 1 to 20", function () {
       
     
@@ -105,5 +173,5 @@ describe("About Applying What We Have Learnt", function() {
   it("should find the 10001st prime", function () {
 
   });
-  */
-});
+*/
+
